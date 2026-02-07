@@ -12,11 +12,16 @@ import {
 import { useParams } from "react-router-dom";
 import Login from "@/components/auth/login.jsx";
 import Register from "@/components/auth/register.jsx";
+import { useSelector } from "react-redux";
 
 const AuthPage = () => {
   const { form } = useParams();
-  const currentForm=form || "login";
-  
+  const currentForm = form || "login";
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  if (isAuthenticated) {
+    window.location.href = "/";
+  }
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 h-screen w-screen">
       <div className="bg-foreground px-10 py-10 xl:pt-0 xl:flex xl:flex-col xl:justify-center">
@@ -103,11 +108,7 @@ const AuthPage = () => {
           </ul>
         </div>
       </div>
-      <div>
-        {
-          currentForm === "login" ? <Login /> : <Register />
-        }
-      </div>
+      <div>{currentForm === "login" ? <Login /> : <Register />}</div>
     </div>
   );
 };
