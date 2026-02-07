@@ -29,12 +29,12 @@ api.interceptors.response.use(
           {},
           { withCredentials: true },
         );
-        store.dispatch(setAccessToken(res.data.accessToken));
-        originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+        store.dispatch(setAccessToken(res.data?.accessToken));
+        originalRequest.headers.Authorization = `Bearer ${res.data?.accessToken}`;
         return api(originalRequest);
       } catch (err) {
         store.dispatch(logout());
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       }
     }
     return Promise.reject(error);
