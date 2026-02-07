@@ -1,7 +1,7 @@
-import { use, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import axios from "axios";
-import { setAccessToken, finishLoading, setUser } from "./authSlice";
+import { setAccessToken, finishLoading, setUser, logout } from "./authSlice";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -14,16 +14,17 @@ export const useAuth = () => {
           {},
           { withCredentials: true },
         );
-        dispatch(setAccessToken(refreshRes.data.accessToken));
+        dispatch(setAccessToken(refreshRes.data?.accessToken));
         const meRes = await axios.get("http://localhost:3000/api/auth/me", {
           headers: {
-            Authorization: `Bearer ${refreshRes.data.accessToken}`,
+            Authorization: `Bearer ${refreshRes.data?.accessToken}`,
           },
           withCredentials: true,
         });
-        dispatch(setUser(meRes.data));
+        dispatch(setUser(meRes.data?.user));
       } catch (error) {
-        console.log("error in useAuth ", error.message);
+        console.error("Session restoration failed:", error);
+        dispatch(logout());
       } finally {
         dispatch(finishLoading());
       }
