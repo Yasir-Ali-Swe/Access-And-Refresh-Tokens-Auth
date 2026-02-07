@@ -11,7 +11,7 @@ const ProtectedRoutes = () => {
       </div>
     );
   }
-  return user ? <Outlet /> : <Navigate to="/auth" />;
+  return user ? <Outlet /> : <Navigate to="/auth/login" />;
 };
 
 export default ProtectedRoutes;
