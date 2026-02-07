@@ -8,17 +8,15 @@ import AuthLoader from "@/components/authLoader.jsx";
 const App = () => {
   useAuth();
   return (
-    <>
-      <AuthLoader>
-        <Routes>
-          <Route path="/auth/:form?" element={<Auth />} />
-          <Route path="/auth/verify-email/:token" element={<VerifyEmail />} />
-          <Route element={<ProtectedRoutes />}>
-            <Route path="/" element={<Dashboard />} />
-          </Route>
-        </Routes>
-      </AuthLoader>
-    </>
+    <AuthLoader>
+      <Routes>
+        <Route path="/auth/:form?" element={<Auth />} />
+        <Route path="/auth/verify-email/:token" element={<VerifyEmail />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/" element={<Dashboard />} />
+        </Route>
+      </Routes>
+    </AuthLoader>
   );
 };
 
