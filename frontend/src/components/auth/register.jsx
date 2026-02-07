@@ -23,7 +23,9 @@ import { Spinner } from "../ui/spinner";
 import { Mail, Eye, EyeOff, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
 import { Link } from "react-router-dom";
-
+import { useMutation } from "@tanstack/react-query";
+import { register } from "@/features/auth/authApi.js";
+import { toast } from "sonner";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,9 +43,25 @@ const Register = () => {
     });
   };
 
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: register,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setFormData({
+        fullName: "",
+        email: "",
+        password: "",
+        role: "client",
+      });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message);
+    },
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    mutate(formData);
   };
 
   const togglePasswordVisibility = () => {
@@ -138,10 +156,11 @@ const Register = () => {
             </div>
             <div className="w-full mt-6">
               <Button
+                disabled={isPending}
                 type="submit"
                 className="w-full cursor-pointer"
               >
-                Register{" "}
+                {isPending ? <Spinner /> : "Register"}
               </Button>
             </div>
           </form>
