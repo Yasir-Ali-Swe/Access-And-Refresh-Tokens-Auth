@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -13,16 +13,24 @@ import { Label } from "@/components/ui/label.jsx";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
 import { Link } from "react-router-dom";
-
-
+import { useMutation } from "@tanstack/react-query";
+import { login } from "@/features/auth/authApi.js";
+import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setAccessToken } from "@/features/auth/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -30,9 +38,26 @@ const Login = () => {
       [name]: value,
     });
   };
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setFormData({
+        email: "",
+        password: "",
+      });
+      dispatch(setAccessToken(data.accessToken));
+      navigate("/");
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message);
+    },
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);  
+    mutate(formData);
   };
 
   const togglePasswordVisibility = () => {
@@ -90,10 +115,11 @@ const Login = () => {
             </div>
             <div className="w-full mt-6">
               <Button
+                disabled={isPending || isAuthenticated}
                 type="submit"
                 className="w-full cursor-pointer"
               >
-                Login{" "}
+                {isPending ? <Spinner /> : "Login"}
               </Button>
             </div>
           </form>
