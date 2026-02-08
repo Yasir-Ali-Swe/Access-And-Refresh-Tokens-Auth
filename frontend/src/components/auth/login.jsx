@@ -43,11 +43,11 @@ const Login = () => {
     mutationFn: login,
     onSuccess: (data) => {
       toast.success(data.message);
+      dispatch(setAccessToken(data.accessToken));
       setFormData({
         email: "",
         password: "",
       });
-      dispatch(setAccessToken(data.accessToken));
       navigate("/");
     },
     onError: (error) => {
